@@ -1,18 +1,42 @@
 #include <iostream>
-#include <string>
+#include <filesystem>
+#include <queue>
+#include <stack>
+#include <vector>
 
+namespace fs = std::filesystem;
 using namespace std;
 
+struct Operation {
+    fs::path original;
+    fs::path vault;
+};
+
+stack<Operation> undoStack;
+stack<Operation> redoStack;
+
+vector<fs::path> scanDirectory(const fs::path& root) {
+    queue<fs::path> q;
+    vector<fs::path> files;
+
+    q.push(root);
+
+    while (!q.empty()) {
+        fs::path cur = q.front();
+        q.pop();
+
+        for (auto& entry : fs::directory_iterator(cur)) {
+            if (entry.is_directory()) {
+                q.push(entry.path());
+            } else if (entry.is_regular_file()) {
+                files.push_back(entry.path());
+            }
+        }
+    }
+    return files;
+}
 int main() {
-    string path;
-
-    cout << "File Recovery and Optimization System\n";
-    cout << "------------------------------------\n";
-    cout << "Enter directory path to scan: ";
-    getline(cin, path);
-
-    cout << "\nYou entered path: " << path << endl;
-    cout << "Project initialized successfully.\n";
+    
 
     return 0;
 }
