@@ -35,6 +35,17 @@ vector<fs::path> scanDirectory(const fs::path& root) {
     }
     return files;
 }
+void moveToVault(const fs::path& file, const fs::path& vaultDir) {
+    fs::create_directories(vaultDir);
+    fs::path dest = vaultDir / file.filename();
+
+    fs::rename(file, dest);
+
+    undoStack.push({file, dest});
+    while (!redoStack.empty()) redoStack.pop();
+
+    cout << "Optimized (moved to vault): " << file.filename() << endl;
+}
 int main() {
     
 
