@@ -46,6 +46,19 @@ void moveToVault(const fs::path& file, const fs::path& vaultDir) {
 
     cout << "Optimized (moved to vault): " << file.filename() << endl;
 }
+void undo() {
+    if (undoStack.empty()) {
+        cout << "Nothing to recover\n";
+        return;
+    }
+    Operation op = undoStack.top();
+    undoStack.pop();
+
+    fs::rename(op.vault, op.original);
+    redoStack.push(op);
+
+    cout << "Recovered: " << op.original.filename() << endl;
+}
 int main() {
     
 
