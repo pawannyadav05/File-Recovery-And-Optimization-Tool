@@ -59,6 +59,19 @@ void undo() {
 
     cout << "Recovered: " << op.original.filename() << endl;
 }
+void redo() {
+    if (redoStack.empty()) {
+        cout << "Nothing to redo\n";
+        return;
+    }
+    Operation op = redoStack.top();
+    redoStack.pop();
+
+    fs::rename(op.original, op.vault);
+    undoStack.push(op);
+
+    cout << "Optimized again: " << op.original.filename() << endl;
+}
 int main() {
     
 
