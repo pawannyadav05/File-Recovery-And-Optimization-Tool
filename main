@@ -73,7 +73,55 @@ void redo() {
     cout << "Optimized again: " << op.original.filename() << endl;
 }
 int main() {
-    
+    string path;
+    cout << "Enter directory path to scan: ";
+    getline(cin, path);
 
+    fs::path root(path);
+    fs::path vault = "vault";
+
+    if (!fs::exists(root)) {
+        cout << "Invalid path\n";
+        return 0;
+    }
+
+    vector<fs::path> files = scanDirectory(root);
+
+    if (files.empty()) {
+        cout << "No files found\n";
+        return 0;
+    }
+
+    cout << "\nFiles found:\n";
+    for (size_t i = 0; i < files.size(); i++) {
+        cout << i + 1 << ". " << files[i].filename() << endl;
+    }
+
+    int choice;
+    cout << "\nEnter file number to optimize (delete): ";
+    cin >> choice;
+
+    if (choice < 1 || choice > files.size()) {
+        cout << "Invalid choice\n";
+        return 0;
+    }
+
+    moveToVault(files[choice - 1], vault);
+
+    char cmd;
+    do {
+        cout << "\nMenu:\n";
+        cout << "u - Recover file\n";
+        cout << "r - Delete again\n";
+        cout << "q - Quit\n";
+        cout << "Enter choice: ";
+        cin >> cmd;
+
+        if (cmd == 'u') undo();
+        else if (cmd == 'r') redo();
+
+    } while (cmd != 'q');
+
+    cout << "Program ended\n";
     return 0;
-}
+} 
